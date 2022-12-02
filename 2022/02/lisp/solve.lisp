@@ -1,0 +1,13 @@
+(defun score (r)
+  (1+ (mod (+ (* (car r) 6) (* (cdr r) 4) 3) 9)) 
+  )
+
+(let ((rps (loop for line = (read-line *standard-input* nil :eof)
+                                 until (eq line :eof)
+                                 collect (cons (- (char-code (aref line 0))
+                                                  (char-code #\A))
+                                               (- (char-code (aref line 2))
+                                                  (char-code #\X))))))
+  (format t "~D~%" (loop for r in rps sum (score r)))
+  (format t "~D~%" (loop for r in rps sum (score (cons (car r) (mod (+ (car r) (cdr r) 2) 3)))))
+  )
