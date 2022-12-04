@@ -1,5 +1,7 @@
+(load "../../../common/lisp/util.lisp")
+
 (defun value (c)
-  (+ 1 (- (char-code (char-downcase c)) (char-code #\a)) (if (char< c #\a) 26 0))
+  (+ 1 (char- (char-downcase c) #\a) (if (char<= c #\Z) 26 0))
   )
 
 (defun find-common (array &rest arrays)
@@ -8,9 +10,7 @@
           return item)
   )
 
-(let ((sacks (loop for line = (read-line *standard-input* nil :eof)
-                   until (eq line :eof)
-                   collect line)))
+(let ((sacks (parse-input)))
   (format t "~D~%" (loop for sack in sacks
                          sum (value (find-common (subseq sack 0 (/ (length sack) 2))
                                                  (subseq sack (/ (length sack) 2))))))
