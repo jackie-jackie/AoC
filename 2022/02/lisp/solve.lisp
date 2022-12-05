@@ -4,8 +4,9 @@
   (1+ (mod (+ (* opp 6) (* self 4) 3) 9)) 
   )
 
-(let ((rps (parse-input (lambda (line)
-                          (cons (char- (aref line 0) #\A) (char- (aref line 2) #\X))))))
+(let ((rps (parse-input :pre (lambda (line)
+                               (cons (char- (aref line 0) #\A)
+                                     (char- (aref line 2) #\X))))))
   (format t "~D~%" (loop for (opp . self) in rps
                          sum (score opp self)))
   (format t "~D~%" (loop for (opp . result) in rps
