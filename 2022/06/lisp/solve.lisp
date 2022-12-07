@@ -9,8 +9,7 @@
                          if (find c candidate :start (1+ j))
                            do (setf dupe j)
                          finally
-                           (return dupe)
-                           )
+                           (return dupe))
         if (not dupe)
           return (+ i marker-length)
         )
