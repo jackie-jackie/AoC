@@ -18,3 +18,12 @@
   "Get the difference in character code points."
   (- (char-code a) (char-code b))
   )
+
+(defun flatten (l)
+  "Flatten a list."
+  (loop for x in l
+        if (listp x)
+          append (flatten x)
+        else
+          collect x)
+  )
