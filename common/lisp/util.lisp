@@ -1,8 +1,10 @@
-(defun parse-input (&key (pre #'identity) until)
+(defmacro parse-input (&key pre until)
   "Collect lines from stdin and apply optional function to every line."
-  (loop for line = (read-line *standard-input* nil :eof)
-        until (or (if until (string-equal line until) nil) (eq line :eof))
-        collect (funcall pre line))
+  `(loop for line = (read-line *standard-input* nil :eof)
+         until ,(if until
+                    `(or (string-equal line ,until) (eq line :eof))
+                    `(eq line :eof))
+         collect ,(if pre `(,pre line) `line))
   ) 
 
 (defun split-sequence (delim seq)
