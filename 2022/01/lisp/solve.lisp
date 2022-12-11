@@ -4,6 +4,6 @@
                                             :pre parse-integer)
                    until (not elf)
                    collect (reduce #'+ elf))))
-  (format t "~D~%" (reduce #'max elves))
-  (format t "~D~%" (reduce #'+ (subseq (sort elves #'>) 0 3)))
+  (format t "~D~&" (reduce #'max elves))
+  (format t "~D~&" (reduce #'+ (subseq (sort elves #'>) 0 3)))
   )

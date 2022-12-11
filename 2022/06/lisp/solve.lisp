@@ -16,6 +16,6 @@
   )
 
 (let ((data (car (parse-input))))
-  (format t "~D~%" (find-marker 4 data))
-  (format t "~D~%" (find-marker 14 data))
+  (format t "~D~&" (find-marker 4 data))
+  (format t "~D~&" (find-marker 14 data))
   )

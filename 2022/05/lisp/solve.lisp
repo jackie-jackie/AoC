@@ -36,10 +36,10 @@
     (loop for (cnt from to) in instr
           do (loop repeat cnt
                    do (stack-move (aref stacks from) (aref stacks to))))
-    (format t "~A~%" (map 'string #'car stacks))
+    (format t "~A~&" (map 'string #'car stacks))
     )
 
   (loop for (cnt from to) in instr
         do (stack-move (aref stacks from) (aref stacks to) cnt))
-  (format t "~A~%" (map 'string #'car stacks))
+  (format t "~A~&" (map 'string #'car stacks))
   )

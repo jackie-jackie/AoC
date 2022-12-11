@@ -27,10 +27,10 @@
 (let ((dirs (flatten (parse-dir (cdr (parse-input :pre (lambda (line)
                                                          (split-sequence #\  line)
                                                          )))))))
-  (format t "~D~%" (loop for d in dirs
+  (format t "~D~&" (loop for d in dirs
                          if (<= d 100000)
                            sum d))
-  (format t "~D~%" (loop for d in dirs
+  (format t "~D~&" (loop for d in dirs
                          if (<= (- (car dirs) d) 40000000)
                            minimize d))
   )

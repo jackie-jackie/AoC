@@ -5,7 +5,7 @@
                     `(or (string-equal line ,until) (eq line :eof))
                     `(eq line :eof))
          collect ,(if pre `(,pre line) `line))
-  ) 
+  )
 
 (defun split-sequence (delim seq)
   "Split a sequence into subsequences seperated by delimiter."

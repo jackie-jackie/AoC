@@ -46,6 +46,6 @@
                                          (parse-integer (cadr split)))
                                    )
                                  ))))
-  (format t "~D~%" (count-unique (simulate instr 1)))
-  (format t "~D~%" (count-unique (simulate instr 9)))
+  (format t "~D~&" (count-unique (simulate instr 1)))
+  (format t "~D~&" (count-unique (simulate instr 9)))
   )

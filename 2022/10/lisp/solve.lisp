@@ -11,7 +11,7 @@
                    if (string= (car i) "addx")
                      collect '("noop" . 0)
                    collect i)))
-  (format t "~D~%" (loop for pc from 1
+  (format t "~D~&" (loop for pc from 1
                          for i in instr
                          and x = 1 then (+ (cdr i) x)
                          if (zerop (mod (- pc 20) 40))
@@ -26,5 +26,5 @@
                                    collect #\.
                                  if (zerop (mod (1+ pc) 40))
                                    collect #\Newline)
-                           'string))  
+                           'string))
   )

@@ -1,0 +1,62 @@
+(load "../../../common/lisp/util.lisp")
+
+(defun parse-line (line)
+  (let ((split (split-sequence #\  (remove #\, (remove #\: (string-trim " " line))))))
+    (cond
+      ((string= (car split) "Monkey")
+       0) ; used as counter for inspected items
+      ((string= (car split) "Starting")
+       (loop for i in (cddr split)
+             collect (parse-integer i)))
+      ((string= (car split) "Operation")
+       (lambda (old)
+         (funcall (case (aref (nth 4 split) 0)
+                    (#\+ #'+)
+                    (#\* #'*)
+                    )
+                  (if (string= (nth 3 split) "old") old (parse-integer (nth 3 split)))
+                  (if (string= (nth 5 split) "old") old (parse-integer (nth 5 split))))
+         )
+       )
+      ((string= (car split) "Test")
+       (parse-integer (car (last split)))
+       )
+      ((string= (car split) "If")
+       (parse-integer (car (last split)))
+       )
+      )
+    )
+  )
+
+(defun simulate-round (monkeys dec mod)
+  (loop for monkey across monkeys
+        do (loop for item in (cadr monkey)
+                 do (incf (car monkey)) ; increase inspection counter
+                    (if dec ; adjust worry level
+                        (setf item (mod (floor (funcall (nth 2 monkey) item) 3) mod))
+                        (setf item (mod (funcall (nth 2 monkey) item) mod)))
+                    (let ((target (aref monkeys (if (zerop (mod item (nth 3 monkey)))
+                                                    (nth 4 monkey)
+                                                    (nth 5 monkey)))))
+                      (setf (cadr target) (append (cadr target) (cons item nil)))
+                      )
+                 finally (setf (cadr monkey) nil))
+        finally (return monkeys))
+  )
+
+(defun simulate (monkeys rounds dec)
+  (loop repeat rounds
+        do (simulate-round monkeys dec (reduce #'* (map 'list #'cadddr monkeys)))
+        finally (return monkeys))
+  )
+
+(defun score (monkeys)
+  (reduce #'* (subseq (sort (map 'list #'car monkeys) #'>=) 0 2))
+  )
+
+(let ((monkeys (loop for m = (parse-input :until "" :pre parse-line)
+                             until (not m)
+                             collect m)))
+  (format t "~D~&" (score (simulate (coerce (copy-tree monkeys) 'vector) 20 t)))
+  (format t "~D~&" (score (simulate (coerce monkeys 'vector) 10000 nil)))
+  )

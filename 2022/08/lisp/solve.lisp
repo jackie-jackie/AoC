@@ -26,7 +26,7 @@
 (let ((trees (parse-input :pre (lambda (line)
                                  (loop for c across line
                                        collect (digit-char-p c))))))
-  (format t "~D~%" (reduce-matrix4 trees
+  (format t "~D~&" (reduce-matrix4 trees
                                    (lambda (row)
                                      (loop for h in row
                                            for v = t then (> h m)
@@ -36,7 +36,7 @@
                                    sum
                                    count
                                    or))
-  (format t "~D~%" (reduce-matrix4 trees
+  (format t "~D~&" (reduce-matrix4 trees
                                    (lambda (row)
                                      (loop for h in row
                                            for rest = (cdr row) then (cdr rest)
