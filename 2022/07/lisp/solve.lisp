@@ -3,9 +3,9 @@
 (defun parse-dir (data)
   "Convert input to directory tree structure. Does not validate input correctness."
   (loop for d = data then (cdr d)
-        until (every #'identity (mapcar #'string= (car d) '("$" "cd" "..")))
+        until (every #'string= (car d) '("$" "cd" ".."))
         ; recurse into directories
-        if (every #'identity (mapcar #'string= (car d) '("$" "cd")))
+        if (every #'string= (car d) '("$" "cd"))
           collect (multiple-value-bind
                         (dir rest)
                         (parse-dir (cdr d))

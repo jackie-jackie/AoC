@@ -29,3 +29,9 @@
         else
           collect x)
   )
+
+(defun count-unique (list eq)
+  "Count unique elements in sorted list."
+  (loop for (a b) on list
+        count (or (not b) (not (funcall eq a b))))
+  )
