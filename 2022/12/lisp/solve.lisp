@@ -4,7 +4,7 @@
   (loop for (x . y) in positions
         for elev = (1- (aref map x y))
         if (and (aref unvisited x y)
-                (< (1+ x) (car (array-dimensions map)))
+                (< (1+ x) (array-dimension map 0))
                 (aref unvisited (1+ x) y)
                 (>= (aref map (1+ x) y) elev))
           collect (cons (1+ x) y)
@@ -14,7 +14,7 @@
                 (>= (aref map (1- x) y) elev))
           collect (cons (1- x) y)
         if (and (aref unvisited x y)
-                (< (1+ y) (cadr (array-dimensions map)))
+                (< (1+ y) (array-dimension map 1))
                 (aref unvisited x (1+ y))
                 (>= (aref map x (1+ y)) elev))
           collect (cons x (1+ y))
@@ -32,8 +32,8 @@
   )
 
 (defun position-map (value map)
-  (loop for x from 0 below (car (array-dimensions map))
-        for y = (loop for y from 0 below (cadr (array-dimensions map))
+  (loop for x from 0 below (array-dimension map 0)
+        for y = (loop for y from 0 below (array-dimension map 1)
                       if (= value (aref map x y)) return y)
         if y return (cons x y))
   )
