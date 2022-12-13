@@ -1,4 +1,5 @@
 (load "../../../common/lisp/util.lisp")
+(load "../../../common/lisp/grid.lisp")
 
 (defun expand (positions map unvisited)
   (loop for (x . y) in positions
@@ -26,18 +27,6 @@
         do (setf (aref unvisited x y) nil))
   )
 
-(defun make-map (input)
-  (make-array (list (length input) (length (car input)))
-              :initial-contents input)
-  )
-
-(defun position-map (value map)
-  (loop for x from 0 below (array-dimension map 0)
-        for y = (loop for y from 0 below (array-dimension map 1)
-                      if (= value (aref map x y)) return y)
-        if y return (cons x y))
-  )
-
 (defun find-path (start target map)
   (let ((unvisited (make-array (array-dimensions map) :initial-element t)))
     (loop for positions = (list start) then (expand positions map unvisited)
@@ -47,11 +36,11 @@
     )
   )
 
-(let* ((map (make-map (parse-input :pre (lambda (line)
-                                          (map 'list #'char-code line)
-                                          ))))
-       (start (position-map (char-code #\S) map))
-       (end (position-map (char-code #\E) map)))
+(let* ((map (make-grid (parse-input :pre (lambda (line)
+                                           (map 'list #'char-code line)
+                                           ))))
+       (start (position-grid (char-code #\S) map))
+       (end (position-grid (char-code #\E) map)))
   (setf (aref map (car start) (cdr start)) (char-code #\a))
   (setf (aref map (car end) (cdr end)) (char-code #\z))
 
