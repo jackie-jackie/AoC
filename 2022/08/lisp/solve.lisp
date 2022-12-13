@@ -38,8 +38,7 @@
                                    or))
   (format t "~D~&" (reduce-matrix4 trees
                                    (lambda (row)
-                                     (loop for h in row
-                                           for rest = (cdr row) then (cdr rest)
+                                     (loop for (h . rest) on row
                                            for view = (position-if (lambda (x)
                                                                      (>= x h)) rest)
                                            collect (if view (1+ view) (length rest)))

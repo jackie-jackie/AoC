@@ -24,10 +24,7 @@
                           (if (= (car a) (car b))
                               (<= (cdr a) (cdr b))
                               (<= (car a) (car b)))
-                          ))
-                (lambda (a b)
-                  (and (= (car a) (car b)) (= (cdr a) (cdr b)))
-                  ))
+                          )))
   )
 
 (defun simulate (instr knots)
