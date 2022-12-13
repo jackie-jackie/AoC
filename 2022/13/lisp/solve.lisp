@@ -33,6 +33,6 @@
                            sum i))
   (format t "~D~&" (let ((sorted (sort (apply #'append '(((2)) ((6))) signal-pairs)
                                        #'signal<)))
-                     (* (1+ (position '((2)) sorted))
-                        (1+ (position '((6)) sorted)))))
+                     (* (1+ (position '((2)) sorted :test #'equal))
+                        (1+ (position '((6)) sorted :test #'equal)))))
   )
