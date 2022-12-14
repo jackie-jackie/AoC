@@ -4,7 +4,7 @@
   (if (zerop power) 1 (* 2 (pow2 (1- power))))
   )
 
-(let ((input (cons 0 (sort (parse-input :pre parse-integer) #'<))))
+(let ((input (cons 0 (sort (parse-input :pre #'parse-integer) #'<))))
   (format t "~D~&" (loop for (a b) on input
                          for diff = (- (if b b (+ a 3)) a)
                          count (= diff 1) into ones

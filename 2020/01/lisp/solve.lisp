@@ -10,7 +10,7 @@
             if solution do (return (* solution i))))
   )
 
-(let ((input (sort (parse-input :pre parse-integer) #'<=)))
+(let ((input (sort (parse-input :pre #'parse-integer) #'<=)))
   (format t "~D~&" (solve input 2 2020))
   (format t "~D~&" (solve input 3 2020))
   )

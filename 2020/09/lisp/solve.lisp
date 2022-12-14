@@ -1,6 +1,6 @@
 (load "../../../common/lisp/util.lisp")
 
-(let* ((input (parse-input :pre parse-integer))
+(let* ((input (parse-input :pre #'parse-integer))
        (invalid (loop for head on input
                       for num in (nthcdr 25 input)
                       if (not (loop for i in head

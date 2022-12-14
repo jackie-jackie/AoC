@@ -4,7 +4,7 @@
          until ,(if until
                     `(or (string-equal line ,until) (eq line :eof))
                     `(eq line :eof))
-         collect ,(if pre `(,pre line) `line))
+         collect ,(if pre `(funcall ,pre line) `line))
   )
 
 (defun split-sequence (delim seq)

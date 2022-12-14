@@ -24,7 +24,7 @@
     )
   )
 
-(let ((signal-pairs (loop for pair = (parse-input :until "" :pre parse-line)
+(let ((signal-pairs (loop for pair = (parse-input :until "" :pre #'parse-line)
                           while pair
                           collect pair)))
   (format t "~D~&" (loop for (a b) in signal-pairs

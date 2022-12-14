@@ -54,7 +54,7 @@
   (reduce #'* (subseq (sort (map 'list #'car monkeys) #'>=) 0 2))
   )
 
-(let ((monkeys (loop for m = (parse-input :until "" :pre parse-line)
+(let ((monkeys (loop for m = (parse-input :until "" :pre #'parse-line)
                              until (not m)
                              collect m)))
   (format t "~D~&" (score (simulate (coerce (copy-tree monkeys) 'vector) 20 t)))

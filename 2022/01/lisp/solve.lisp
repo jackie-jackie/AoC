@@ -1,7 +1,7 @@
 (load "../../../common/lisp/util.lisp")
 
 (let ((elves (loop for elf = (parse-input :until ""
-                                          :pre parse-integer)
+                                          :pre #'parse-integer)
                    until (not elf)
                    collect (reduce #'+ elf))))
   (format t "~D~&" (reduce #'max elves))
