@@ -1,8 +1,7 @@
 (load "../../../common/lisp/util.lisp")
 
 (defun valid-field (field)
-  (let ((key (car field))
-        (value (cadr field)))
+  (destructuring-bind (key value) field
     (cond
       ((string= key "byr")
        (multiple-value-bind
@@ -39,31 +38,21 @@
                      )
                    (subseq value 1))))
       ((string= key "ecl")
-       (some (lambda (color) (string= color value))
-             '("amb" "blu" "brn" "gry" "grn" "hzl" "oth")))
+       (find value '("amb" "blu" "brn" "gry" "grn" "hzl" "oth") :test #'string=))
       ((string= key "pid")
-       (multiple-value-bind
-         (num len)
-         (parse-integer value :junk-allowed t)
-         (declare (ignore num))
-         (= (length value) len 9)
-         ))
+       (= 9 (length value) (nth-value 1 (parse-integer value :junk-allowed t))))
       )
     )
   )
 
-(let ((passports (loop for passport = (parse-input :pre (lambda (line)
-                                                          (split-sequence #\  line)
-                                                          )
-                                                   :until "")
+(let ((passports (loop for passport = (parse-input :pre #'split-space :until "")
                        while passport
-                       collect (remove-if (lambda (field)
-                                            (string= (car field) "cid")
-                                            )
-                                          (mapcar (lambda (field)
-                                                    (split-sequence #\: field)
-                                                    )
-                                                  (flatten passport))))))
+                       collect (remove "cid"
+                                       (mapcar (lambda (field)
+                                                 (split-sequence field #\:))
+                                               (flatten passport))
+                                       :key #'car
+                                       :test #'string=))))
   (format t "~D~&" (loop for p in passports
                          count (= (length p) 7)))
   (format t "~D~&" (loop for p in passports

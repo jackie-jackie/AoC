@@ -1,32 +1,27 @@
 (load "../../../common/lisp/util.lisp")
 
 (defun parse-line (line)
-  (loop for part in (split-sequence #\  line) by #'cddr
-        collect (let ((split (split-sequence #\, part)))
-                  (cons (parse-integer (car split))
-                        (parse-integer (cadr split)))
-                  ))
+  (loop for (x y) on (split-sequence line #\  #\- #\> #\,) by #'cddr
+        collect (cons (parse-integer x) (parse-integer y)))
   )
 
-(defmacro drop-sand (grid with-floor)
-  `(loop for cnt from 0
-         while (loop with x = 500
-                     for y from 1
-                     unless (array-in-bounds-p ,grid x y)
-                       return ,(if with-floor `(setf (aref ,grid x (1- y)) t) nil)
-                     if (and (aref ,grid x y)
-                             (not (and (array-in-bounds-p ,grid (1- x) y)
-                                       (aref ,grid (1- x) y))))
-                       do (decf x)
-                     else if (and (aref ,grid x y)
-                                  (not (and (array-in-bounds-p ,grid (1+ x) y)
-                                            (aref ,grid (1+ x) y))))
-                       do (incf x)
-                     else if (aref ,grid x y)
-                       return (if (and (= x 500) (= y 1))
-                                  (progn (incf cnt) nil)
-                                  (setf (aref ,grid x (1- y)) t)))
-         finally (return cnt))
+(defun drop-sand (grid with-floor)
+  (loop for cnt from 0
+        while (loop with x = 500
+                    for y from 1
+                    unless (array-in-bounds-p grid x y)
+                      return (and with-floor (setf (aref grid x (1- y)) t))
+                    if (and (aref grid x y)
+                            (not (ignore-errors (aref grid (1- x) y))))
+                      do (decf x)
+                    else if (and (aref grid x y)
+                                 (not (ignore-errors (aref grid (1+ x) y))))
+                      do (incf x)
+                    else if (aref grid x y)
+                      return (if (and (= x 500) (= y 1))
+                                 (progn (incf cnt) nil)
+                                 (setf (aref grid x (1- y)) t)))
+        finally (return cnt))
   )
 
 (let* ((paths (parse-input :pre #'parse-line))

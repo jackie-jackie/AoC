@@ -1,19 +1,22 @@
-(defmacro parse-input (&key pre until)
+(defun parse-input (&key pre until)
   "Collect lines from stdin and apply optional function to every line."
-  `(loop for line = (read-line *standard-input* nil :eof)
-         until ,(if until
-                    `(or (string-equal line ,until) (eq line :eof))
-                    `(eq line :eof))
-         collect ,(if pre `(funcall ,pre line) `line))
+  (loop for line = (read-line *standard-input* nil :eof)
+        until (or (string-equal line until) (eq line :eof))
+        collect (if pre (funcall pre line) line))
   )
 
-(defun split-sequence (delim seq)
+(defun split-sequence (seq &rest delims)
   "Split a sequence into subsequences seperated by delimiter."
-  (let ((index (position delim seq)))
-    (if index
-        (cons (subseq seq 0 index) (split-sequence delim (subseq seq (1+ index))))
-        (cons seq nil))
-    )
+  (loop for start = 0 then (1+ end)
+        for end = (position-if (lambda (item) (find item delims)) seq :start start)
+        for subs = (subseq seq start end)
+        unless (zerop (length subs)) collect subs into split
+        unless end return split
+        )
+  )
+
+(defun split-space (seq)
+  (split-sequence seq #\ )
   )
 
 (defun char- (a b)
@@ -28,10 +31,4 @@
           append (flatten x)
         else
           collect x)
-  )
-
-(defun count-unique (list)
-  "Count unique elements in sorted list."
-  (loop for (a b) on list
-        count (or (not b) (not (equal a b))))
   )

@@ -14,12 +14,11 @@
 (defun simulate1 (grid)
   (loop for new = (make-array (array-dimensions grid))
         and old = grid then new
-        while (> (grid-stencil9 (lambda (self &rest neighbors)
-                                  (update 4 self neighbors)
-                                  )
-                                old
-                                :target-grid new)
-                 0)
+        until (zerop (grid-stencil9 (lambda (self &rest neighbors)
+                                      (update 4 self neighbors)
+                                      )
+                                    old
+                                    :target-grid new))
         finally (return new))
   )
 
@@ -28,24 +27,21 @@
                            (1 . 1) (1 . -1) (-1 . 1) (-1 . -1))
         for n = (loop for nx = (+ x dx) then (+ nx dx)
                       for ny = (+ y dy) then (+ ny dy)
-                      while (and (array-in-bounds-p grid nx ny)
-                                 (char= (aref grid nx ny) #\.))
+                      while (ignore-errors (char= (aref grid nx ny) #\.))
                       finally
-                        (return (when (array-in-bounds-p grid nx ny)
-                                  (aref grid nx ny))))
+                        (return (ignore-errors (aref grid nx ny))))
         if n collect n)
   )
 
 (defun simulate2 (grid)
   (loop for new = (make-array (array-dimensions grid))
         and old = grid then new
-        while (> (grid-stencil #'in-sight
-                               (lambda (self &rest neighbors)
-                                 (update 5 self neighbors)
-                                 )
-                               old
-                               :target-grid new)
-                 0)
+        until (zerop (grid-stencil #'in-sight
+                                   (lambda (self &rest neighbors)
+                                     (update 5 self neighbors)
+                                     )
+                                   old
+                                   :target-grid new))
         finally (return new))
   )
 

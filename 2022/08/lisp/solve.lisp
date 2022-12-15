@@ -23,9 +23,7 @@
                    ,red-col (,red-elem vl vr vt vb)))
   )
 
-(let ((trees (parse-input :pre (lambda (line)
-                                 (loop for c across line
-                                       collect (digit-char-p c))))))
+(let ((trees (parse-input :pre (lambda (line) (map 'list #'digit-char-p line)))))
   (format t "~D~&" (reduce-matrix4 trees
                                    (lambda (row)
                                      (loop for h in row
@@ -40,7 +38,8 @@
                                    (lambda (row)
                                      (loop for (h . rest) on row
                                            for view = (position-if (lambda (x)
-                                                                     (>= x h)) rest)
+                                                                     (>= x h))
+                                                                   rest)
                                            collect (if view (1+ view) (length rest)))
                                      )
                                    maximize

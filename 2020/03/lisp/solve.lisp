@@ -3,7 +3,7 @@
 (defun count-slope (trees right down)
   (loop for row in trees by (lambda (l) (nthcdr down l))
         for offset from 0 by right
-        count (char= (aref row (mod offset (length row))) #\#))
+        count (char= (char row (mod offset (length row))) #\#))
   )
 
 (let ((trees (parse-input)))

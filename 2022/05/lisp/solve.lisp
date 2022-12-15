@@ -1,33 +1,31 @@
 (load "../../../common/lisp/util.lisp")
 
-(defmacro stack-move (from to &optional cnt)
-  (if cnt
-      `(progn
-         (setf ,to (append (subseq ,from 0 ,cnt) ,to))
-         (setf ,from (subseq ,from ,cnt))
+(defmacro stack-move (from to &optional count)
+  (if count
+      `(let* ((head ,from)
+              (tail (nthcdr (1- ,count) ,from)))
+         (setf ,from (cdr tail))
+         (setf (cdr tail) ,to)
+         (setf ,to head)
          )
-      `(progn
-         (setf ,to (cons (car ,from) ,to))
-         (setf ,from (cdr ,from))
-         )
+      `(push (pop ,from) ,to)
       )
   )
 
 (let ((stacks (apply #'vector
                      (apply #'mapcar
-                            (lambda (&rest l)
-                              (loop for i in l
-                                    if (char/= i #\ ) collect i)
+                            (lambda (&rest chars)
+                              (remove #\  chars)
                               )
                             (parse-input :until ""
                                          :pre (lambda (line)
                                                 (loop for i = 1 then (+ i 4)
-                                                      until (>= i (length line))
-                                                      collect (aref line i))
+                                                      while (< i (length line))
+                                                      collect (char line i))
                                                 )
                                          ))))
       (instr (parse-input :pre (lambda (line)
-                                 (loop for x in (cdr (split-sequence #\  line)) by #'cddr
+                                 (loop for x in (cdr (split-sequence line #\ )) by #'cddr
                                        for offset = 0 then -1
                                        collect (+ offset (parse-integer x)))
                                  )

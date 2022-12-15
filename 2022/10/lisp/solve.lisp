@@ -1,7 +1,7 @@
 (load "../../../common/lisp/util.lisp")
 
 (let ((instr (loop for i in (parse-input :pre (lambda (line)
-                                                (let ((split (split-sequence #\  line)))
+                                                (let ((split (split-space line)))
                                                   (if (cadr split)
                                                       (list 0 ; fake noop
                                                             (parse-integer (cadr split)))

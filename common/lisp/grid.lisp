@@ -26,9 +26,8 @@
   (grid-stencil (lambda (grid x y)
                   (loop for nx from (1- x) to (1+ x)
                         append (loop for ny from (1- y) to (1+ y)
-                                     if (and (array-in-bounds-p grid nx ny)
-                                             (or (/= x nx) (/= y ny)))
-                                     collect (aref grid nx ny)))
+                                     if (or (/= x nx) (/= y ny))
+                                       collect (ignore-errors (aref grid nx ny))))
                   )
                 kernel
                 grid

@@ -26,9 +26,10 @@
   )
 
 (let ((instr (coerce (parse-input :pre (lambda (line)
-                                         (let ((split (split-sequence #\  line)))
-                                           (cons (car split)
-                                                 (parse-integer (cadr split)))
+                                         (destructuring-bind
+                                           (op val)
+                                           (split-space line)
+                                           (cons op (parse-integer val))
                                            )))
                      'vector)))
   (format t "~D~&" (simulate (copy-seq instr)))

@@ -1,16 +1,12 @@
 (load "../../../common/lisp/util.lisp")
 
 (defun contains (bags color)
-  (let ((rule (find-if (lambda (r)
-                         (string= (car r) color)
-                         )
-                       bags)))
-    (loop for (bag . count) in (cdr rule)
-          sum (* count (1+ (contains bags bag)))))
+  (loop for (bag . count) in (cdr (find color bags :test #'string= :key #'car))
+        sum (* count (1+ (contains bags bag))))
   )
 
 (let ((bags (parse-input :pre (lambda (line)
-                                (loop for (a b c d) on (split-sequence #\  line)
+                                (loop for (a b c d) on (split-space line)
                                       by #'cddddr
                                       for i from 0
                                       if (= i 0)

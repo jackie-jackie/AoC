@@ -1,10 +1,10 @@
 (load "../../../common/lisp/util.lisp")
 
 (defun parse-line (line)
-  (loop for c across line
-        for i from 0
-        do (setf (aref line i) (case c (#\[ #\() (#\] #\)) (#\, #\ ) (t c))))
-  (read-from-string line)
+  (read-from-string (nsubstitute #\( #\[
+                                 (nsubstitute #\) #\]
+                                              (nsubstitute #\  #\,
+                                                           line))))
   )
 
 (defun signal< (a b)
