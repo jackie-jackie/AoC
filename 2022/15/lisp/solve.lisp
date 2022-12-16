@@ -40,8 +40,11 @@
                       ))
   (format t "~D~&" (loop for y from 0 to 4000000
                          for ranges = (combine-ranges (beacon-blocked sensors y))
-                         if (or (> (length ranges) 1)
-                                (> (caar ranges) 0)
-                                (< (cdar ranges) 4000000))
-                           return (+ y (* 4000000 (1+ (cdar ranges))))))
+                         if (> (length ranges) 1)
+                           ; doesn't work if there are gaps outside solution area
+                           return (+ y (* 4000000 (1+ (cdar ranges))))
+                         if (> (caar ranges) 0)
+                           return y
+                         if (< (cdar ranges) 4000000)
+                           return (+ y (* 4000000 4000000))))
   )
