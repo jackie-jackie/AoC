@@ -1,7 +1,7 @@
 (load "../../../common/lisp/util.lisp")
 
 (defun contains (bags color)
-  (loop for (bag . count) in (cdr (find color bags :test #'string= :key #'car))
+  (loop for (bag . count) in (cdr (assoc color bags :test #'string=))
         sum (* count (1+ (contains bags bag))))
   )
 
