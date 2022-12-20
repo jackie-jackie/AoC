@@ -1,85 +1,97 @@
 (load "../../../common/lisp/util.lisp")
 
+(defun resource (str)
+  (cond
+    ((string= str "ore") :ore)
+    ((string= str "clay") :clay)
+    ((string= str "obsidian") :obsidian)
+    ((string= str "geode") :geode)
+    )
+  )
+
 (defun parse-line (line)
   (let ((split (split-sequence line #\  #\: #\.)))
-    (loop with part = (nthcdr 3 split)
-          while part
-          collect (cons (car part)
-                        (loop for (cost type . rest) on (nthcdr 3 part) by #'cdddr
-                              collect (cons type (parse-integer cost))
-                              while (string= (car rest) "and")
-                              finally (setf part (cdr rest)))))
+    (reverse ; reversing blueprints improves performance later on
+      (loop with part = (nthcdr 3 split)
+            while part
+            collect (cons (resource (car part))
+                          (loop for (cost res . rest) on (nthcdr 3 part) by #'cdddr
+                                collect (cons (resource res) (parse-integer cost))
+                                while (string= (car rest) "and")
+                                finally (setf part (cdr rest))))))
     )
   )
 
 (defun value-or-zero (item alist)
-  (let ((entry (assoc item alist :test #'string=)))
+  (let ((entry (assoc item alist)))
     (if entry (cdr entry) 0))
   )
 
-(defun update-res (res bots &optional (time 1) cost)
+(defun update-resources (resources bots &optional (time 1) cost)
   "Add resources produced by bots in given time and subtract a one-time cost."
-  (loop for type in (union (mapcar #'car bots) (mapcar #'car res) :test #'string=)
-        collect (cons type (+ (* (value-or-zero type bots) time)
-                              (value-or-zero type res)
-                              (- (value-or-zero type cost)))))
+  (loop for res in (union (mapcar #'car bots) (mapcar #'car resources))
+        collect (cons res (+ (* (value-or-zero res bots) time)
+                              (value-or-zero res resources)
+                              (- (value-or-zero res cost)))))
   )
 
-(defun add-bot (new bots)
-  (if (assoc new bots :test #'string=)
-      (loop for (b . c) in bots
-            collect (cons b (if (string= b new)
-                                (1+ c)
-                                c)))
-      (cons (cons new 1) bots))
+(defun add-bot (bot bots)
+  (if (assoc bot bots)
+      (loop for (res . count) in bots
+            collect (cons res (if (string= res bot)
+                                  (1+ count)
+                                  count)))
+      (cons (cons bot 1) bots))
   )
 
 (defun upper-bound (resources bots time-left)
-  (+ (value-or-zero "geode" resources)
-     (* time-left (value-or-zero "geode" bots))
+  (+ (value-or-zero :geode resources)
+     (* time-left (value-or-zero :geode bots))
      (/ (* time-left (1- time-left)) 2))
   )
 
-(defun time-to-build (blueprint res bots bot cost)
+(defun time-to-build (blueprint resources bots bot cost)
   "Get time needed to produce enough resources to cover cost or nil if we can
    never cover the cost or we don't want to build the bot."
-  (and (or (string= bot "geode")
+  (and (or (string= bot :geode)
            (< (value-or-zero bot bots) ; current number of bots
               (loop for b in blueprint ; highest cost of resource produced by this bot
                     maximize (value-or-zero bot (cdr b)))))
-       (loop for (r . c) in cost
-             unless (assoc r bots :test #'string=) ; can't produce needed resources
-               return nil
-             if (<= c (value-or-zero r res)) ; current resources are sufficient
-               maximize 0
+       (loop for (res . count) in cost
+             unless (assoc res bots)
+               return nil ; can't produce needed resources
+             if (<= count (value-or-zero res resources))
+               maximize 0 ; current resources are enough, no time needed
              else
-               maximize (ceiling (- c (value-or-zero r res)) (value-or-zero r bots))))
+               maximize (ceiling (- count (value-or-zero res resources)) ; res needed
+                                 (value-or-zero res bots)))) ; production rate
   )
 
-(defun max-geodes (blueprint resources bots time-left current-max)
+(defun max-geodes (blueprint time-left &optional (resources '())
+                             (bots '((:ore . 1))) (current-max 0))
   (if (or (<= time-left 0) (<= (upper-bound resources bots time-left) current-max))
-      (value-or-zero "geode" resources)
-      (loop for (type . cost) in (reverse blueprint)
-            for time = (time-to-build blueprint resources bots type cost)
+      (value-or-zero :geode resources)
+      (loop for (res . cost) in blueprint
+            for time = (time-to-build blueprint resources bots res cost)
             if (and time (> time-left time))
               maximize (max-geodes blueprint
-                                  (update-res resources bots (1+ time ) cost)
-                                  (add-bot type bots)
                                   (- time-left time 1)
+                                  (update-resources resources bots (1+ time ) cost)
+                                  (add-bot res bots)
                                   m)
                 into m
             finally (return (max m (max-geodes blueprint
-                                (update-res resources bots)
-                                bots
-                                0
-                                m)))))
+                                               0
+                                               (update-resources resources bots)
+                                               bots
+                                               m)))))
   )
 
 (let ((blueprints (parse-input :pre #'parse-line)))
   (format t "~D~&" (loop for b in blueprints
                          for id from 1
-                         sum (* id (max-geodes b '() '(("ore" . 1)) 24 0))))
+                         sum (* id (max-geodes b 24))))
   (format t "~D~&" (reduce #'* (loop for b in blueprints
                                      repeat 3
-                                     collect (max-geodes b '() '(("ore" . 1)) 32 0))))
+                                     collect (max-geodes b 32))))
   )
