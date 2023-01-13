@@ -15,7 +15,7 @@
                                        finally (return (+ (* rowl 8) coll)))
                                  ))))
   (format t "~D~&" (reduce #'max seats))
-  (format t "~D~&" (loop for (a b) on (sort seats #'<=)
+  (format t "~D~&" (loop for (a b) on (sort seats #'<)
                          while b
                          if (= (- b a) 2) return (1+ a)))
   )

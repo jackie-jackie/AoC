@@ -51,7 +51,7 @@
   )
 
 (defun score (monkeys)
-  (reduce #'* (subseq (sort (map 'list #'car monkeys) #'>=) 0 2))
+  (reduce #'* (subseq (sort (map 'list #'car monkeys) #'>) 0 2))
   )
 
 (let ((monkeys (loop for m = (parse-input :until "" :pre #'parse-line)
