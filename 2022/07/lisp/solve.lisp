@@ -1,4 +1,4 @@
-(load "../../../common/lisp/util.lisp")
+(load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
 
 (defun parse-dir (data)
   "Convert input to directory tree structure. Does not validate input correctness."

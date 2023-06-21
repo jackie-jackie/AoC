@@ -1,4 +1,4 @@
-(load "../../../common/lisp/util.lisp")
+(load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
 
 (defun contains (bags color)
   (loop for (bag . count) in (cdr (assoc color bags :test #'string=))

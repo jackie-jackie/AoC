@@ -1,4 +1,4 @@
-(load "../../../common/lisp/util.lisp")
+(load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
 
 (defun count-slope (trees right down)
   (loop for row in trees by (lambda (l) (nthcdr down l))

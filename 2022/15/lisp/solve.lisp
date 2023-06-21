@@ -1,4 +1,4 @@
-(load "../../../common/lisp/util.lisp")
+(load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
 
 (defun beacon-blocked (sensors row)
   (loop for (sx sy bx by) in sensors

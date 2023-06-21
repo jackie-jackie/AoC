@@ -1,4 +1,4 @@
-(load "../../../common/lisp/util.lisp")
+(load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
 
 (defun xor (arg0 arg1)
   (or (and arg0 (not arg1)) (and (not arg0) arg1))

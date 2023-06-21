@@ -1,4 +1,4 @@
-(load "../../../common/lisp/util.lisp")
+(load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
 
 (let ((instr (loop for i in (parse-input :pre (lambda (line)
                                                 (let ((split (split-space line)))

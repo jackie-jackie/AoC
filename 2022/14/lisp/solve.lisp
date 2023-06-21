@@ -1,4 +1,4 @@
-(load "../../../common/lisp/util.lisp")
+(load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
 
 (defun parse-line (line)
   (loop for (x y) on (split-sequence line #\  #\- #\> #\,) by #'cddr

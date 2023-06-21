@@ -1,5 +1,5 @@
-(load "../../../common/lisp/util.lisp")
-(load "../../../common/lisp/grid.lisp")
+(load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
+(load (merge-pathnames "../../../common/lisp/grid.lisp" *load-truename*))
 
 (defun expand (positions map unvisited)
   (loop for (x . y) in positions

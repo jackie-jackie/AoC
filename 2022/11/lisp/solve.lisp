@@ -1,4 +1,4 @@
-(load "../../../common/lisp/util.lisp")
+(load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
 
 (defun parse-line (line)
   (destructuring-bind (fst . rst) (split-sequence line #\, #\: #\ )

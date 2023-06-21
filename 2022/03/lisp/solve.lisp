@@ -1,4 +1,4 @@
-(load "../../../common/lisp/util.lisp")
+(load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
 
 (defun value (c)
   (+ 1 (char- (char-downcase c) #\a) (if (char<= c #\Z) 26 0))

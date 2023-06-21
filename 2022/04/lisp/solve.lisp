@@ -1,4 +1,4 @@
-(load "../../../common/lisp/util.lisp")
+(load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
 
 (let ((pairs (parse-input :pre (lambda (line)
                                  (mapcar #'parse-integer

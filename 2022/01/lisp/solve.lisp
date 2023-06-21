@@ -1,4 +1,4 @@
-(load "../../../common/lisp/util.lisp")
+(load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
 
 (let ((elves (loop for elf = (parse-input :until "" :pre #'parse-integer)
                    while elf

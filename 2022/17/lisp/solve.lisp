@@ -1,4 +1,4 @@
-(load "../../../common/lisp/util.lisp")
+(load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
 
 (defparameter *rocks* '#1=((#( t   t   t   t ))
                            (#(nil  t  nil)

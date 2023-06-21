@@ -1,4 +1,4 @@
-(load "../../../common/lisp/util.lisp")
+(load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
 
 (defun find-marker (marker-length data)
   (loop for i = 0 then (+ i 1 dupe)

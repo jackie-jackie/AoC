@@ -1,4 +1,4 @@
-(load "../../../common/lisp/util.lisp")
+(load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
 
 (defparameter *directions* '#1=(((-1 . 0) (-1 . 1) (-1 . -1)) ; north
                                 ((1 . 0) (1 . 1) (1 . -1)) ; south

@@ -1,4 +1,4 @@
-(load "../../../common/lisp/util.lisp")
+(load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
 
 (let ((input (parse-input :pre #'parse-integer)))
   (format t "~D~&" (loop for (a b) on input

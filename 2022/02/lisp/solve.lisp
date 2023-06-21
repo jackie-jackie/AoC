@@ -1,4 +1,4 @@
-(load "../../../common/lisp/util.lisp")
+(load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
 
 (defun score (opp self)
   (1+ (mod (+ (* opp 6) (* self 4) 3) 9))

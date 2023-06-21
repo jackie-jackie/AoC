@@ -1,4 +1,4 @@
-(load "../../../common/lisp/util.lisp")
+(load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
 
 (defun solve (list count sum)
   "Returns the product of count elements in sorted list that sum up to sum"
