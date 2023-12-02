@@ -2,7 +2,7 @@
 
 (defun bit-modes (seq &optional (invert nil))
   (map 'vector
-       (lambda (x) (if (not (eq invert (>= x (/ (length seq) 2)))) 1 0))
+       (lambda (x) (if (not (eql invert (>= x (/ (length seq) 2)))) 1 0))
        (reduce (lambda (a b) (map 'vector #'+ a b))
                seq))
   )

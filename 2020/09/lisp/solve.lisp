@@ -15,7 +15,7 @@
                                      (setf start (cdr start)))
                          if (= acc invalid)
                            return (loop for n on start
-                                        until (eq n end)
+                                        until (eql n end)
                                         minimize (car n) into min
                                         maximize (car n) into max
                                         finally (return (+ min max)))))

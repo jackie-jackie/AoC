@@ -1,7 +1,7 @@
 (defun parse-input (&key pre until)
   "Collect lines from stdin and apply optional function to every line."
   (loop for line = (read-line *standard-input* nil :eof)
-        until (or (string-equal line until) (eq line :eof))
+        until (or (string-equal line until) (eql line :eof))
         collect (if pre (funcall pre line) line))
   )
 

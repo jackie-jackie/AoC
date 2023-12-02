@@ -49,7 +49,7 @@
                               (cons (car target) (cdr target)))
                         (setf (aref elves i j) (cons i j))
                         (setf (aref elves target-x target-y) :occupied))
-                 else if (and elf (eq (aref elves target-x target-y) :occupied))
+                 else if (and elf (eql (aref elves target-x target-y) :occupied))
                    do (setf (aref elves i j) (cons i j))
                  else if (and elf (not (aref elves target-x target-y)))
                    do (setf (aref elves target-x target-y) (cons i j))

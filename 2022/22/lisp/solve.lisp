@@ -22,12 +22,12 @@
         for ncol = (mod (+ col (case direction (0 1) (2 -1) (t 0)))
                         (array-dimension board 1))
         for i from 1 to distance
-        do (loop while (eq (aref board nrow ncol) #\ )
+        do (loop while (eql (aref board nrow ncol) #\ )
                  do (setf nrow (mod (+ nrow (case direction (1 1) (3 -1) (t 0)))
                                     (array-dimension board 0)))
                     (setf ncol (mod (+ ncol (case direction (0 1) (2 -1) (t 0)))
                                     (array-dimension board 1))))
-        if (eq (aref board nrow ncol) #\#)
+        if (eql (aref board nrow ncol) #\#)
           return (cons row col)
         else
           do (setf row nrow)
