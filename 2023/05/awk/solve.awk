@@ -1,18 +1,18 @@
 #!/usr/bin/env -S awk -f
 
 /seeds: / {
-	for (i=2; i<=NF; i++) {
-		output[0][i-2]=$i
-		output[1][i-2]=$i
+	for (i = 2; i <= NF; i++) {
+		output[0][i-2] = $i
+		output[1][i-2] = $i
 	}
 }
 
 /map:/ {
-	for (i=0; i<length(output[0]); i++) {
-		input[0][i]=output[0][i]
+	for (i = 0; i < length(output[0]); i++) {
+		input[0][i] = output[0][i]
 	}
-	for (i=0; i<length(output[1]); i++) {
-		input[1][i]=output[1][i]
+	for (i = 0; i < length(output[1]); i++) {
+		input[1][i] = output[1][i]
 	}
 }
 
@@ -29,9 +29,9 @@
 		}
 	}
 	/* part 2 */
-	for (i=0; i<length(input[1]); i+=2) {
-		start=input[1][i]
-		end=start+input[1][i+1]
+	for (i = 0; i < length(input[1]); i+=2) {
+		start = input[1][i]
+		end = start + input[1][i+1]
 		if (start < src && end > src) { /* split of prefix */
 			output[1][length(output[1])] = input[1][length(input[1])] = start
 			output[1][length(output[1])] = input[1][length(input[1])] = src - start
