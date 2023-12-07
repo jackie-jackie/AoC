@@ -10,7 +10,7 @@
   (fifth hand))
 
 (defun cards-type (cards &optional joker-wildcard)
-  "Get an integer representation of the type of the set of cards."
+  "Get an integer representation of the type of the list of cards."
   (let ((counts (sort (map 'list
                            (lambda (c) (count c cards))
                            (remove-duplicates (sort (if joker-wildcard
@@ -23,7 +23,7 @@
     (reduce #'+ (mapcar #'* counts counts))))
 
 (defun cards-number (cards &optional joker-wildcard)
-  "Get an integer representation of the set of card maintaining sort order."
+  "Get an integer representation of the list of cards maintaining sort order."
   (let ((card-order (if joker-wildcard "J23456789TQKA""23456789TJQKA")))
     (parse-integer (format nil "~{~X~}" (map 'list
                                              (lambda (c) (position c card-order))
