@@ -7,10 +7,8 @@
       (loop for i in list
             for solution = (solve (remove i list) (1- count) (- sum i))
             until (> i sum)
-            if solution do (return (* solution i))))
-  )
+            if solution return (* solution i))))
 
 (let ((input (sort (parse-input :pre #'parse-integer) #'<)))
   (format t "~D~&" (solve input 2 2020))
-  (format t "~D~&" (solve input 3 2020))
-  )
+  (format t "~D~&" (solve input 3 2020)))

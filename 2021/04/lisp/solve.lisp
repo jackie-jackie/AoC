@@ -4,8 +4,7 @@
   (* (reduce #'+ (remove nil (coerce (make-array (array-total-size board)
                                                  :displaced-to board)
                                      'list)))
-     draw)
-  )
+     draw))
 
 (defun mark (board draw)
   (loop for x from 0 below (array-dimension board 0)
@@ -20,28 +19,21 @@
                                               never (aref board x y)
                                               finally (return (score board draw))))
                                     )
-                                  nil
-                                  )
-                      )
-        )
-  )
+                                  nil))))
 
 (defmacro mark-all (boards draw)
   `(loop for board in ,boards
          for score = (mark board ,draw)
          if score collect score into scores
          else collect board into new-boards
-         finally (setf ,boards new-boards) (return (car scores)))
-  )
+         finally (setf ,boards new-boards) (return (car scores))))
 
 (let ((draws (car (parse-input :until ""
                                :pre (lambda (l)
-                                      (mapcar #'parse-integer (split-sequence l #\,))
-                                      ))))
+                                      (mapcar #'parse-integer (split-sequence l #\,))))))
       (boards (loop for b = (parse-input :until ""
                                          :pre (lambda (l)
-                                                (mapcar #'parse-integer (split-space l))
-                                                ))
+                                                (mapcar #'parse-integer (split-space l))))
                     while b
                     collect (make-array (list (length b) (length b))
                                         :initial-contents b))))
@@ -50,5 +42,4 @@
                          thereis (mark-all boards draw)))
   (format t "~D~&" (loop for draw in draws
                          for score = (mark-all boards draw)
-                         unless boards do (return score)))
-  )
+                         unless boards return score)))

@@ -4,7 +4,7 @@
   (loop for source in sources
         collect (loop for (m-dst m-src m-len) in map
                       if (< (1- m-src) source (+ m-src m-len))
-                      do (return (+ m-dst (- source m-src)))
+                      return (+ m-dst (- source m-src))
                       finally (return source))))
 
 (defun do-map-ranges (sources map)
@@ -21,7 +21,7 @@
                      and do (decf length (- end m-end))
                      and do (setf end m-end)
                      if (<= m-src start end m-end)   ; range fully in map
-                     do (return (cons (+ start (- m-dst m-src)) (cons length res)))
+                     return (cons (+ start (- m-dst m-src)) (cons length res))
                      finally (return (cons start (cons length res))))))
 
 (let ((seeds (mapcar #'parse-integer (cdar (parse-input :pre #'split-space :until ""))))
