@@ -19,7 +19,7 @@
         append (loop for col from (1- start-y) to (1+ start-y)
                      if (ignore-errors (find (cons start-row start-y)
                                              (pipe-connections grid row col)
-                                             :test #'equal)) 
+                                             :test #'equal))
                      collect (cons row col))))
 
 (let* ((grid (make-grid (parse-input)))
