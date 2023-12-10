@@ -26,18 +26,22 @@
   (loop with flat-grid = (flat-grid grid)
         for index from 0 below (array-total-size grid)
         for line-break = nil then (and line-breaks
-                                       (= 0 (mod index (array-dimension grid 0))))
+                                       (= 0 (mod index (array-dimension grid 1))))
         if line-break collect #\Newline
-        collect (aref flat-grid index))
-  )
+        collect (aref flat-grid index)))
 
 (defun grid-stencil9 (kernel grid &key target-grid)
   (grid-stencil (lambda (grid x y)
                   (loop for nx from (1- x) to (1+ x)
                         append (loop for ny from (1- y) to (1+ y)
                                      if (or (/= x nx) (/= y ny))
-                                       collect (ignore-errors (aref grid nx ny))))
-                  )
+                                       collect (ignore-errors (aref grid nx ny)))))
+                kernel
+                grid
+                :target-grid target-grid))
+
+(defun grid-stencil1 (kernel grid &key target-grid)
+  (grid-stencil (lambda (grid x y) (declare (ignore grid x y)) '())
                 kernel
                 grid
                 :target-grid target-grid))
