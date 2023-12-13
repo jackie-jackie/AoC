@@ -19,7 +19,7 @@
                               )
                             (parse-input :until ""
                                          :pre (lambda (line)
-                                                (loop for i = 1 then (+ i 4)
+                                                (loop for i from 1 by 4
                                                       while (< i (length line))
                                                       collect (char line i))
                                                 )

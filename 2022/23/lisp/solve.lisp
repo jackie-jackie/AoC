@@ -67,7 +67,7 @@
 
 (defun simulate (elves checkpoint)
   (loop with checkpoint-value = nil
-        for directions = *directions* then (cdr directions)
+        for directions on *directions*
         for rounds from 1
         while (> (simulate-round elves directions) 0)
         if (= rounds checkpoint)
