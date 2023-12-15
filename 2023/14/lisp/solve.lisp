@@ -10,7 +10,7 @@
          (dimension-y `(array-dimension ,grid ,(if vertical-p 0 1)))
          (x (if vertical-p 'col 'row))
          (y (if vertical-p 'row 'col)))
-    `(loop for ,x from 0 below ,dimension-x 
+    `(loop for ,x from 0 below ,dimension-x
            do (loop with bottom = ,(if to-0-p 0 `(1- ,dimension-y))
                     for ,y from bottom ,@(if to-0-p `(below ,dimension-y) `(downto 0))
                     for c = (aref grid row col)
@@ -45,9 +45,8 @@
     (loop repeat *cycles*
           for nil = (cycle grid)
           for id = (grid-id grid)
-          for i from 0
           for loop = (position id history :test #'equal)
-          if loop return (values (1+ loop) (nthcdr loop load-history)) 
+          if loop return (values (1+ loop) (nthcdr loop load-history))
           collect id into history
           collect (total-load grid) into load-history)
     (format t "~D~&" (nth (mod (- *cycles* offset) (length period)) period))))
