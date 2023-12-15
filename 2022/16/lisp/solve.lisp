@@ -1,28 +1,22 @@
 (load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
 
 (defun valve-int (str)
-  (+ (* 26 (char- (char str 0) #\A))
-     (char- (char str 1) #\A))
-  )
+  (+ (* 26 (char- (char str 0) #\A)) (char- (char str 1) #\A)))
 
 (defun parse-line (line)
   (let ((split (split-sequence line #\  #\, #\; #\=)))
     (list (valve-int (nth 1 split))
           (parse-integer (nth 5 split))
-          (mapcar #'valve-int (subseq split 10)))
-    )
-  )
+          (mapcar #'valve-int (subseq split 10)))))
 
 (defun tunnels (input)
   (loop for i in input
         append (loop for tun in (caddr i)
-                     if (< (car i) tun) collect (cons (cons (car i) tun) 1)))
-  )
+                     if (< (car i) tun) collect (acons (car i) tun 1))))
 
 (defun valves (input)
   (loop for i in input
-        collect (cons (car i) (cadr i)))
-  )
+        collect (cons (car i) (cadr i))))
 
 (defun trans-closure (tunnels)
   (loop for max-dist from 1
@@ -34,8 +28,7 @@
                                             (not (assoc (cons start e)
                                                         closure
                                                         :test #'equal)))
-                                    collect (cons (cons start e)
-                                                  (+ dist d))
+                                    collect (acons start e (+ dist d))
                                     if (and (= start s)
                                             (/= end e)
                                             (<= (+ dist d) max-dist)
@@ -43,8 +36,7 @@
                                                               (max end e))
                                                         closure
                                                         :test #'equal)))
-                                    collect (cons (cons (min end e) (max end e))
-                                                  (+ dist d))
+                                    collect (acons (min end e) (max end e) (+ dist d))
                                     if (and (= end e)
                                             (/= start s)
                                             (<= (+ dist d) max-dist)
@@ -52,19 +44,17 @@
                                                               (max start s))
                                                         closure
                                                         :test #'equal)))
-                                    collect (cons (cons (min start s)
-                                                        (max start s))
-                                                  (+ dist d))))
+                                    collect (acons (min start s)
+                                                   (max start s)
+                                                   (+ dist d))))
         while cl
         append (remove-duplicates cl :test #'equal) into closure
-        finally (return closure))
-  )
+        finally (return closure)))
 
 (defun dists-valves (from tunnels time-left)
   (when from (loop for ((s . e) . d) in tunnels
                    if (and (= from s) (< d time-left)) collect (cons e d)
-                   if (and (= from e) (< d time-left)) collect (cons s d)))
-  )
+                   if (and (= from e) (< d time-left)) collect (cons s d))))
 
 (defun release (time-left start valves tunnels)
   (if (or (<= time-left 0) (not valves))
@@ -76,8 +66,7 @@
               maximize (+ (release (- time-left distance 1) next
                                    (remove next valves :key #'car)
                                    tunnels)
-                          (* rate (- time-left distance 1)))))
-  )
+                          (* rate (- time-left distance 1))))))
 
 (defun sane-combinations (time-left start valves tunnels)
   (loop with dists0 = (dists-valves (car start) tunnels (car time-left))
@@ -98,8 +87,7 @@
                      else if (and dv0 dvv1)
                        collect (cons (assoc v dists0) (assoc vv dists1))
                      else if (and dvv0 dv1)
-                       collect (cons (assoc vv dists0) (assoc v dists1))))
-  )
+                       collect (cons (assoc vv dists0) (assoc v dists1)))))
 
 (defun release2 (time-left start valves tunnels)
   (if (or (not valves))
@@ -128,12 +116,10 @@
                                      (release (cdr time-left)
                                               (cdr start)
                                               valves
-                                              tunnels))))))
-  )
+                                              tunnels)))))))
 
 (let* ((input (parse-input :pre #'parse-line))
        (valves (valves input))
        (tunnels (trans-closure (tunnels input))))
   (format t "~D~&" (release 30 0 (remove 0 valves :key #'cdr) tunnels))
-  (format t "~D~&" (release2 '(26 . 26) '(0 . 0) (remove 0 valves :key #'cdr) tunnels))
-  )
+  (format t "~D~&" (release2 '(26 . 26) '(0 . 0) (remove 0 valves :key #'cdr) tunnels)))
