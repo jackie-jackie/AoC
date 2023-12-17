@@ -41,12 +41,12 @@
                    for (nil n-cnt n-x n-y) = neighbor
                    for g = (when (array-in-bounds-p g-score n-dir n-cnt n-x n-y)
                              (+ (aref g-score dir cnt x y)
-                                (loop for m from 1 to (abs true-delta)
+                                (loop for d from 1 to (abs true-delta)
                                       sum (aref grid
-                                                (if (< n-dir 2) (+ (* m delta) x) x)
-                                                (if (< n-dir 2) y (+ (* m delta) y))))))
+                                                (if (< n-dir 2) (+ (* d delta) x) x)
+                                                (if (< n-dir 2) y (+ (* d delta) y))))))
                    if (and g
-                           (/= 1 (+ dir n-dir))
+                           (/= 1 (mod (+ dir n-dir) 4))
                            (loop for c from 0 to n-cnt
                                  always (< g (aref g-score n-dir c n-x n-y))))
                    do (setf (aref g-score n-dir n-cnt n-x n-y) g)
