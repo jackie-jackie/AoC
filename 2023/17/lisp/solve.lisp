@@ -1,0 +1,61 @@
+(load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
+(load (merge-pathnames "../../../common/lisp/grid.lisp" *load-truename*))
+
+(defun minimum-heat-loss (grid min-distance max-distance)
+  (let ((start `(0 ,min-distance 0 0))
+        (goal (cons (1- (array-dimension grid 0)) (1- (array-dimension grid 1))))
+        (g-score (make-array (append `(4 ,max-distance) (array-dimensions grid))
+                             :initial-element most-positive-double-float))
+        (f-score (make-array (append `(4 ,max-distance) (array-dimensions grid))
+                             :initial-element most-positive-double-float)))
+    (loop for dir from 0 below (array-dimension g-score 0)
+          do (loop for cnt from 0 below (array-dimension g-score 1)
+                   do (setf (aref g-score dir cnt (third start) (fourth start)) 0)))
+    (loop for dir from 0 below (array-dimension g-score 0)
+          do (loop for cnt from 0 below (array-dimension g-score 1)
+                   do (setf (aref f-score dir cnt (third start) (fourth start))
+                            (+ (abs (- (third start) (car goal)))
+                               (abs (- (third start) (cdr goal)))))))
+
+    (loop with open-set = (list start)
+          until (null open-set)
+          for current = (loop for node in open-set
+                              for current = node
+                              then (if (< (apply #'aref f-score node)
+                                          (apply #'aref f-score current))
+                                       node
+                                       current)
+                              finally (return current))
+          for (dir cnt x y) = current
+          if (equal (cons x y) goal) return (apply #'aref g-score current)
+          do (setf open-set (delete current open-set :test #'equal))
+          do (loop for n-x from (1- x) to (1+ x) by 2
+                   for n-dir from 0
+                   for neighbor = (list n-dir (if (= n-dir dir) (1+ cnt) 0) n-x y)
+                   for g = (ignore-errors (+ (apply #'aref g-score current)
+                                             (aref grid n-x y)))
+                   if (ignore-errors (and (/= 1 (+ dir n-dir))
+                                          (or (>= cnt min-distance) (= dir n-dir))
+                                          g (< g (apply #'aref g-score neighbor))))
+                   do (setf (apply #'aref g-score neighbor) g)
+                   and do (setf (apply #'aref f-score neighbor)
+                                (+ g (+ (abs (- n-x (car goal))) (abs (- y (cdr goal))))))
+                   and unless (find neighbor open-set :test #'equal)
+                   (push neighbor open-set))
+          do (loop for n-y from (1- y) to (1+ y) by 2
+                   for n-dir from 2
+                   for neighbor = (list n-dir (if (= n-dir dir) (1+ cnt) 0) x n-y)
+                   for g = (ignore-errors (+ (apply #'aref g-score current)
+                                             (aref grid x n-y)))
+                   if (ignore-errors (and (/= 5 (+ dir n-dir))
+                                          (or (>= cnt min-distance) (= dir n-dir))
+                                          g (< g (apply #'aref g-score neighbor))))
+                   do (setf (apply #'aref g-score neighbor) g)
+                   and do (setf (apply #'aref f-score neighbor)
+                                (+ g (+ (abs (- x (car goal))) (abs (- n-y (cdr goal))))))
+                   and unless (find neighbor open-set :test #'equal)
+                   do (push neighbor open-set)))))
+
+(let ((grid (make-grid (parse-input :pre (curry #'map 'list #'digit-char-p)))))
+  (format t "~D~&" (minimum-heat-loss grid 0 3))
+  (format t "~D~&" (minimum-heat-loss grid 3 10)))
