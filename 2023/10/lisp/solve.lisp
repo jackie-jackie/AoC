@@ -3,14 +3,14 @@
 
 (defun pipe-connections (grid row col)
   "List of coordinates of connected pipes."
-  (let ((pipe (aref grid row col)))
-    (cond ((char= pipe #\-) (list (cons row (1+ col)) (cons row (1- col))))
-          ((char= pipe #\|) (list (cons (1+ row) col) (cons (1- row) col)))
-          ((char= pipe #\7) (list (cons row (1- col)) (cons (1+ row) col)))
-          ((char= pipe #\J) (list (cons row (1- col)) (cons (1- row) col)))
-          ((char= pipe #\L) (list (cons row (1+ col)) (cons (1- row) col)))
-          ((char= pipe #\F) (list (cons row (1+ col)) (cons (1+ row) col)))
-          (t '()))))
+  (case (aref grid row col)
+    (#\- (list (cons row (1+ col)) (cons row (1- col))))
+    (#\| (list (cons (1+ row) col) (cons (1- row) col)))
+    (#\7 (list (cons row (1- col)) (cons (1+ row) col)))
+    (#\J (list (cons row (1- col)) (cons (1- row) col)))
+    (#\L (list (cons row (1+ col)) (cons (1- row) col)))
+    (#\F (list (cons row (1+ col)) (cons (1+ row) col)))
+    (otherwise '())))
 
 (defun start-connections (grid start-row start-y)
   "List of coordinates of connected pipes.

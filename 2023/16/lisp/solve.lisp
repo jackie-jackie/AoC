@@ -2,7 +2,7 @@
 (load (merge-pathnames "../../../common/lisp/grid.lisp" *load-truename*))
 
 (defmacro reflect (beam mirror)
-  (let ((op (cond ((char= mirror #\\) '+) ((char= mirror #\/) '-))))
+  (let ((op (case mirror (#\\ '+) (#\/ '-))))
     `(cons (cons (,op (caar ,beam) (cddr ,beam)) (,op (cdar ,beam) (cadr ,beam)))
            (cons (,op (cddr ,beam)) (,op (cadr ,beam))))))
 
@@ -18,24 +18,21 @@
     (cond
       ((not (array-in-bounds-p grid row col)) acc)
       ((not (zerop (logand (aref acc row col) (direction-mask drow dcol)))) acc)
-      ((or (char= (aref grid row col) #\.)
-           (and (char= (aref grid row col) #\|) (zerop dcol))
-           (and (char= (aref grid row col) #\-) (zerop drow)))
+      ((case (aref grid row col) (#\. t) (#\| (zerop dcol)) (#\- (zerop drow)))
        (loop for r = row then (+ r drow)
              for c = col then (+ c dcol)
              unless (array-in-bounds-p grid r c) return acc
              unless (zerop (logand (aref acc r c) (direction-mask drow dcol))) return acc
-             if (or (char= (aref grid r c) #\.)
-                    (and (char= (aref grid r c) #\|) (zerop dcol))
-                    (and (char= (aref grid r c) #\-) (zerop drow)))
+             if (case (aref grid r c) (#\. t) (#\| (zerop dcol)) (#\- (zerop drow)))
              do (incf (aref acc r c) (direction-mask drow dcol))
              else return (trace-beam (acons r c (cdr beam)) grid acc)))
       (t (incf (aref acc row col) (direction-mask drow dcol))
-         (cond ((char= (aref grid row col) #\/) (trace-beam (reflect beam #\/) grid acc))
-               ((char= (aref grid row col) #\\) (trace-beam (reflect beam #\\) grid acc))
-               (t (trace-beam (reflect beam #\/)
-                              grid
-                              (trace-beam (reflect beam #\\) grid acc))))))))
+         (case (aref grid row col)
+           (#\/ (trace-beam (reflect beam #\/) grid acc))
+           (#\\ (trace-beam (reflect beam #\\) grid acc))
+           (otherwise (trace-beam (reflect beam #\/)
+                                  grid
+                                  (trace-beam (reflect beam #\\) grid acc))))))))
 
 (defun energized (beam grid)
   "Count fields in grid that have been passed through by the beam."

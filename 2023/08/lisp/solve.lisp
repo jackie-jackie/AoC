@@ -19,7 +19,7 @@
         finally (return steps)))
 
 (defun direction-function (direction)
-  (cond ((char= direction #\L) #'car) ((char= direction #\R) #'cdr)))
+  (ecase direction (#\L #'car) (#\R #'cdr)))
 
 (defun parse-line (line)
   (mapcar #'node-number (split-sequence line #\  #\, #\= #\( #\))))
