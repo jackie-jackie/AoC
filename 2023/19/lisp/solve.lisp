@@ -15,8 +15,8 @@
        (> (part-a end) (part-a start))
        (> (part-s end) (part-s start))))
 
-(defmacro to-symbol (string)
-  `(read-from-string (concatenate 'string "aoc-" ,string)))
+(defun to-symbol (string)
+  (read-from-string (concatenate 'string "aoc-" string)))
 
 (defun aoc-a (start &optional end)
   (if end
@@ -30,54 +30,46 @@
   (declare (ignore start))
   (if end 0 t))
 
-(defmacro parse-workflow ()
-  `(lambda (line)
-     (let ((split (split-sequence line #\{ #\} #\, #\:)))
-       (cons (first split)
+(defun parse-workflow (line)
+  (let ((split (split-sequence line #\{ #\} #\, #\:)))
+       (cons (to-symbol (first split))
              (loop for (a b) on (rest split) by #'cddr
                    if b collect (read-from-string (subseq a 1 2)) ; < or >
                    and collect (read-from-string                  ; x, m, a, or s
                                  (concatenate 'string "part-" (subseq a 0 1)))
                    and collect (parse-integer a :start 2)         ; cmp value
                    and collect b                                  ; next workflow
-                   else collect a)))))
+                   else collect a))))
 
-(defmacro setup-workflows ()
-  (let ((workflows (parse-input :pre (parse-workflow) :until "")))
-    `(progn
-       ,@(loop for wf in workflows
-               collect `(defun ,(to-symbol (first wf)) (start &optional end)
-                          (if end
-                              (if (range-valid start end)
-                                  (+ ,@(loop for (cmp var val f) on (rest wf) by #'cddddr
-                                             if var
-                                             collect `(let ((s (copy-structure start))
-                                                            (e (copy-structure end)))
-                                                        (setf (,var ,(ecase cmp
-                                                                       (> 's) (< 'start)))
-                                                              ,(+ val
-                                                                  (ecase cmp
-                                                                    (> 1) (< 0))))
-                                                        (setf (,var ,(ecase cmp
-                                                                       (> 'end) (< 'e)))
-                                                              ,(+ val
-                                                                  (ecase cmp
-                                                                    (> 1) (< 0))))
-                                                        (,(to-symbol f) s e))
-                                             else collect `(,(to-symbol cmp) start end)))
-                                  0)
-                              (cond ,@(loop for (cmp var val f) on (rest wf) by #'cddddr
-                                            if var collect `((,cmp (,var start) ,val)
-                                                             (,(to-symbol f) start))
-                                            else collect `(t (,(to-symbol cmp) start ))))))))))
+(defun setup-workflows (workflows)
+  (loop for (wf-name . wf) in workflows
+        do (eval `(defun ,wf-name (start &optional end)
+                    (if end
+                        (if (range-valid start end)
+                            (+ ,@(loop for (cmp var val fun) on wf by #'cddddr
+                                       if var
+                                       collect `(let ((s (copy-structure start))
+                                                      (e (copy-structure end)))
+                                                  (setf (,var ,(ecase cmp
+                                                                 (> 's) (< 'start)))
+                                                        ,(+ val (ecase cmp (> 1) (< 0))))
+                                                  (setf (,var ,(ecase cmp
+                                                                 (> 'end) (< 'e)))
+                                                        ,(+ val (ecase cmp (> 1) (< 0))))
+                                                  (,(to-symbol fun) s e))
+                                       else collect `(,(to-symbol cmp) start end)))
+                            0)
+                        (cond ,@(loop for (cmp var val fun) on wf by #'cddddr
+                                      if var collect `((,cmp (,var start) ,val)
+                                                       (,(to-symbol fun) start))
+                                      else collect `(t (,(to-symbol cmp) start)))))))))
 
 (defun parse-part (line)
   (apply #'make-part (loop for (c v) on (split-sequence line #\{ #\} #\, #\=) by #'cddr
                            collect (read-from-string (concatenate 'string ":" c))
                            collect (parse-integer v))))
 
-(setup-workflows)
-
+(setup-workflows (parse-input :pre #'parse-workflow :until ""))
 (let* ((parts (parse-input :pre #'parse-part)))
   (format t "~D~&" (reduce #'+ (mapcar #'part-sum (remove-if (to-symbol "in") parts))))
   (format t "~D~&" (funcall (to-symbol "in")
