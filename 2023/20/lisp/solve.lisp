@@ -82,10 +82,10 @@
                  if (eql (type-of (gethash dest-key modules)) 'conjunction)
                  do (add-input (gethash dest-key modules)
                                (to-keyword (subseq name 1)))))
-  (format t "~A~%" (loop repeat 1000
+  (format t "~D~&" (loop repeat 1000
                          sum (count-pulses modules) into sum
                          finally (return (* (realpart sum) (imagpart sum)))))
   (quit) ; takes way too long
-  (loop for i from 1001
-        until (target-rx modules)
-        finally (return i)))
+  (format t "~D~&" (loop for i from 1001
+                         until (target-rx modules)
+                         finally (return i))))
