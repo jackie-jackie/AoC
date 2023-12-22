@@ -87,6 +87,7 @@
   (format t "~A~%" (loop repeat 1000
                          sum (count-pulses modules) into sum
                          finally (return (* (realpart sum) (imagpart sum)))))
+  (quit) ; takes way too long
   (loop for i from 1001
         until (target-rx modules)
         finally (return i)))
