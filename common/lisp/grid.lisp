@@ -40,6 +40,16 @@
                 grid
                 :target-grid target-grid))
 
+(defun grid-stencil5 (kernel grid &key target-grid)
+  (grid-stencil (lambda (grid x y)
+                  (list (ignore-errors (aref grid (1- x) y))
+                        (ignore-errors (aref grid (1+ x) y))
+                        (ignore-errors (aref grid x (1- y)))
+                        (ignore-errors (aref grid x (1+ y)))))
+                kernel
+                grid
+                :target-grid target-grid))
+
 (defun grid-stencil1 (kernel grid &key target-grid)
   (grid-stencil (lambda (grid x y) (declare (ignore grid x y)) '())
                 kernel
