@@ -21,7 +21,7 @@
   (let ((corner (make-array (array-dimensions pattern)))
         (row-max (1- (array-dimension pattern 0)))
         (col-max (1- (array-dimension pattern 1))))
-    (grid-stencil1 #'identity pattern :target-grid corner) 
+    (grid-stencil1 #'identity pattern :target-grid corner)
     (setf (apply #'aref corner (ecase direction
                                  (:north-west (list row-max col-max))
                                  (:north-east (list row-max 0))
@@ -54,7 +54,7 @@
 (defun count-periodic-orthogonal (pattern center steps direction)
   (loop with edge = (make-array (array-dimensions pattern))
         with row-max = (1- (array-dimension pattern 0))
-        with col-max = (1- (array-dimension pattern 1)) 
+        with col-max = (1- (array-dimension pattern 1))
         with dim = (ecase direction ((:west :east) 0) ((:north :south) 1))
         with buffer = (make-array (array-dimension pattern dim))
         for first = t then nil
