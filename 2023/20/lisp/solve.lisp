@@ -1,5 +1,3 @@
-(declaim (optimize (speed 3) (safety 0)))
-
 (load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
 
 (defclass module ()
