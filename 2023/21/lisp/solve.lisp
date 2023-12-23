@@ -58,7 +58,7 @@
         with dim = (ecase direction ((:west :east) 0) ((:north :south) 1))
         with buffer = (make-array (array-dimension pattern dim))
         for first = t then nil
-        repeat 10 ; TODO convergence criterium
+        repeat 4 ; TODO convergence criterium
         do (loop for x from 0 below (array-dimension buffer 0)
                  do (setf (aref buffer x)
                           (apply #'aref
@@ -84,10 +84,16 @@
                              #'+
                              (mapcar
                                (lambda (x)
-                                 (if (and (numberp x) (= (mod x 2) (mod steps 2)))
-                                     (max 0 (1+ (floor (- steps x)
-                                                       (array-dimension pattern dim))))
-                                     0))
+                                 (cond ((and (numberp x) (= (mod x 2) (mod steps 2)))
+                                        (max 0 (1+ (floor (- steps x)
+                                                          (* 2 (array-dimension pattern
+                                                                                dim))))))
+                                       ((and (numberp x) (/= (mod x 2) (mod steps 2)))
+                                        (max 0 (1+ (floor (- steps x
+                                                             (array-dimension pattern 0))
+                                                          (* 2 (array-dimension pattern
+                                                                                dim))))))
+                                       (t 0)))
                                (grid-list edge)))))))
 
 (defun count-periodic (pattern center steps)
