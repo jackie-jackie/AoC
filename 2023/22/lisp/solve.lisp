@@ -37,8 +37,9 @@
   (when (> distance 0)
     (loop-brick nil grid x y z
       do (setf (apply #'aref grid (mapcar #'- position (list 0 0 distance)))
-               (apply #'aref grid position))
-      do (setf (apply #'aref grid position) 0))
+               (apply #'aref grid position)
+               (apply #'aref grid position)
+               0))
     t))
 
 (defun supported-by (grid x y z)
@@ -46,13 +47,6 @@
   (loop-brick t grid x y z
     if (ignore-errors (brick-p (apply #'aref grid (mapcar #'- position '(0 0 1)))))
     collect (brick-id (apply #'aref grid (mapcar #'- position '(0 0 1))))))
-
-(defun chain-length (brick bricks)
-  (if brick
-      1
-      0
-      )
-  )
 
 (let* ((bricks (parse-input :pre (lambda (line)
                                   (mapcar #'parse-integer

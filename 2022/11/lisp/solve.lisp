@@ -15,18 +15,11 @@
                     (#\* #'*)
                     )
                   (if (string= (nth 2 rst) "old") old (parse-integer (nth 2 rst)))
-                  (if (string= (nth 4 rst) "old") old (parse-integer (nth 4 rst))))
-         )
-       )
+                  (if (string= (nth 4 rst) "old") old (parse-integer (nth 4 rst))))))
       ((string= fst "Test")
-       (parse-integer (car (last rst)))
-       )
+       (parse-integer (car (last rst))))
       ((string= fst "If")
-       (parse-integer (car (last rst)))
-       )
-      )
-    )
-  )
+       (parse-integer (car (last rst)))))))
 
 (defun simulate-round (monkeys dec mod)
   (loop for monkey across monkeys
@@ -39,24 +32,19 @@
                       (push item (cadr (aref monkeys (if (zerop (mod item test))
                                                          succ
                                                          fail))))
-                   finally (setf (cadr monkey) nil))
-             )
-        finally (return monkeys))
-  )
+                   finally (setf (cadr monkey) nil)))
+        finally (return monkeys)))
 
 (defun simulate (monkeys rounds dec)
   (loop repeat rounds
         do (simulate-round monkeys dec (reduce #'* (map 'list #'cadddr monkeys)))
-        finally (return monkeys))
-  )
+        finally (return monkeys)))
 
 (defun score (monkeys)
-  (reduce #'* (subseq (sort (map 'list #'car monkeys) #'>) 0 2))
-  )
+  (reduce #'* (subseq (sort (map 'list #'car monkeys) #'>) 0 2)))
 
 (let ((monkeys (loop for m = (parse-input :until "" :pre #'parse-line)
                      while m
                      collect m)))
   (format t "~D~&" (score (simulate (coerce (copy-tree monkeys) 'vector) 20 t)))
-  (format t "~D~&" (score (simulate (coerce monkeys 'vector) 10000 nil)))
-  )
+  (format t "~D~&" (score (simulate (coerce monkeys 'vector) 10000 nil))))

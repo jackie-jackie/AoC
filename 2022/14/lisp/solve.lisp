@@ -2,8 +2,7 @@
 
 (defun parse-line (line)
   (loop for (x y) on (split-sequence line #\  #\- #\> #\,) by #'cddr
-        collect (cons (parse-integer x) (parse-integer y)))
-  )
+        collect (cons (parse-integer x) (parse-integer y))))
 
 (defun drop-sand (grid with-floor)
   (loop for cnt from 0
@@ -21,8 +20,7 @@
                       return (if (and (= x 500) (= y 1))
                                  (progn (incf cnt) nil)
                                  (setf (aref grid x (1- y)) t)))
-        finally (return cnt))
-  )
+        finally (return cnt)))
 
 (let* ((paths (parse-input :pre #'parse-line))
        (maxheight (reduce #'max (mapcar #'cdr (apply #'append paths))))
@@ -36,10 +34,7 @@
                             do (setf (aref grid sx y) t))
                  else if (= sy ey)
                    do (loop for x from (min sx ex) to (max sx ex)
-                            do (setf (aref grid x sy) t)))
-        )
+                            do (setf (aref grid x sy) t))))
   (let ((solution1 (drop-sand grid nil)))
     (format t "~D~&" solution1)
-    (format t "~D~&" (+ solution1 (drop-sand grid t)))
-    )
-  )
+    (format t "~D~&" (+ solution1 (drop-sand grid t)))))

@@ -17,8 +17,7 @@
                                               finally (return (score board draw)))
                                         (loop for y from 0 below (array-dimension board 1)
                                               never (aref board x y)
-                                              finally (return (score board draw))))
-                                    )
+                                              finally (return (score board draw)))))
                                   nil))))
 
 (defmacro mark-all (boards draw)

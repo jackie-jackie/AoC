@@ -19,8 +19,7 @@
 (defparameter *ground* #(t  t   t   t   t   t   t   t  t))
 
 (defun shaft ()
-  (copy-seq *shaft*)
-  )
+  (copy-seq *shaft*))
 
 (defun collides (rock tower offset)
   (loop for rslice in rock
@@ -29,8 +28,7 @@
                       for tpiece across (make-array (array-dimensions rslice)
                                                     :displaced-to tslice
                                                     :displaced-index-offset offset)
-                      thereis (and rpiece tpiece)))
-  )
+                      thereis (and rpiece tpiece))))
 
 (defun place (rock tower offset)
   (loop for rslice in rock
@@ -40,8 +38,7 @@
                                                :displaced-index-offset offset)
                  for i from 0 below (array-dimension rslice 0)
                  if (aref rslice i)
-                   do (setf (aref tslice-adj i) t)))
-  )
+                   do (setf (aref tslice-adj i) t))))
 
 (defun adjust-top (tower required)
   (cond
@@ -52,8 +49,7 @@
     ((equalp *shaft* (car tower))
      (cons (car tower) (adjust-top (cdr tower) (1- required))))
     (t
-     (cons (shaft) (adjust-top tower (1- required)))))
-  )
+     (cons (shaft) (adjust-top tower (1- required))))))
 
 (defun simulate (pattern total-rocks)
   (loop with offset = 3
@@ -71,24 +67,20 @@
         if (collides rock (cdr tower-position) offset)
           do (place rock tower-position offset)
              (incf nrocks)
-             (setf rocks (cdr rocks))
-             (setf tower (adjust-top tower (+ 3 (length (car rocks)))))
-             (setf tower-position tower)
-             (setf offset 3)
+             (setf rocks (cdr rocks)
+                   tower (adjust-top tower (+ 3 (length (car rocks))))
+                   tower-position tower
+                   offset 3)
         else
           do (setf tower-position (cdr tower-position))
-        finally (return tower)
-        )
-  )
+        finally (return tower)))
 
 (defun tower-height (pattern total-rocks)
-  (1- (length (adjust-top (simulate pattern total-rocks) 0)))
-  )
+  (1- (length (adjust-top (simulate pattern total-rocks) 0))))
 
 (let ((pattern (map 'list
                     (lambda (c)
-                      (case c (#\> 1) (#\< -1))
-                      )
+                      (case c (#\> 1) (#\< -1)))
                     (car (parse-input)))))
   (setf (cdr (last pattern)) pattern)
   (setf *print-circle* t)

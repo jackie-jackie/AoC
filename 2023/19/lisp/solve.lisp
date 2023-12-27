@@ -52,8 +52,8 @@
                                                       (e (copy-structure end)))
                                                   (setf (,var ,(ecase cmp
                                                                  (> 's) (< 'start)))
-                                                        ,(+ val (ecase cmp (> 1) (< 0))))
-                                                  (setf (,var ,(ecase cmp
+                                                        ,(+ val (ecase cmp (> 1) (< 0)))
+                                                        (,var ,(ecase cmp
                                                                  (> 'end) (< 'e)))
                                                         ,(+ val (ecase cmp (> 1) (< 0))))
                                                   (,(to-symbol fun) s e))

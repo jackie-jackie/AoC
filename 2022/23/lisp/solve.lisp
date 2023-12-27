@@ -4,8 +4,7 @@
                                 ((1 . 0) (1 . 1) (1 . -1)) ; south
                                 ((0 . -1) (1 . -1) (-1 . -1)) ; west
                                 ((0 . 1) (1 . 1) (-1 . 1)) ; east
-                                . #1#)
-  )
+                                . #1#))
 
 (defun score (elves)
   (loop for i from 0 below (array-total-size elves)
@@ -15,8 +14,7 @@
         and minimize (cdr tile) into min-y
         and maximize (cdr tile) into max-y
         and count t into n-elves
-        finally (return (- (* (- max-x min-x -1) (- max-y min-y -1)) n-elves)))
-  )
+        finally (return (- (* (- max-x min-x -1) (- max-y min-y -1)) n-elves))))
 
 (defun proposed-move (elf elves directions)
   (loop with (elf-x . elf-y) = elf
@@ -27,8 +25,7 @@
                  never (aref elves (+ elf-x dx) (+ elf-y dy)))
           collect (cons (+ elf-x target-dx) (+ elf-y target-dy)) into free
         finally
-          (return (if (zerop (mod (length free) 4)) elf (car free))))
-  )
+          (return (if (zerop (mod (length free) 4)) elf (car free)))))
 
 (defun simulate-round (elves directions)
   ; determine proposed moves
@@ -46,14 +43,14 @@
                          (not (equal elf (cons i j))))
                    do (let ((target (aref elves target-x target-y)))
                         (setf (aref elves (car target) (cdr target))
-                              (cons (car target) (cdr target)))
-                        (setf (aref elves i j) (cons i j))
-                        (setf (aref elves target-x target-y) :occupied))
+                              (cons (car target) (cdr target))
+                              (aref elves i j) (cons i j)
+                              (aref elves target-x target-y) :occupied))
                  else if (and elf (eql (aref elves target-x target-y) :occupied))
                    do (setf (aref elves i j) (cons i j))
                  else if (and elf (not (aref elves target-x target-y)))
-                   do (setf (aref elves target-x target-y) (cons i j))
-                      (setf (aref elves i j) :origin)))
+                   do (setf (aref elves target-x target-y) (cons i j)
+                            (aref elves i j) :origin)))
   ; cleanup
   (loop for i from 0 below (array-dimension elves 0)
         sum (loop for j from 0 below (array-dimension elves 1)
@@ -62,8 +59,7 @@
                     do (setf (aref elves i j) (cons i j))
                   and count t
                   else if (not (consp elf))
-                    do (setf (aref elves i j) nil)))
-  )
+                    do (setf (aref elves i j) nil))))
 
 (defun simulate (elves checkpoint)
   (loop with checkpoint-value = nil
@@ -72,9 +68,7 @@
         while (> (simulate-round elves directions) 0)
         if (= rounds checkpoint)
           do (setf checkpoint-value (score elves))
-        finally (return (values rounds checkpoint-value))
-        )
-  )
+        finally (return (values rounds checkpoint-value))))
 
 (let* ((input (parse-input))
        ; TODO adaptive array size
@@ -86,13 +80,9 @@
         do (loop for c across line
                  for j from (floor (array-dimension elves 1) 4)
                  if (char= c #\#)
-                   do (setf (aref elves i j) (cons i j))
-                 )
-        )
+                   do (setf (aref elves i j) (cons i j))))
   (multiple-value-bind
     (rounds checkpoint-value )
     (simulate elves 10)
     (format t "~D~&" checkpoint-value)
-    (format t "~D~&" rounds)
-    )
-  )
+    (format t "~D~&" rounds)))

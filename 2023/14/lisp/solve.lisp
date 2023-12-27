@@ -1,7 +1,6 @@
 (load (merge-pathnames "../../../common/lisp/util.lisp" *load-truename*))
 (load (merge-pathnames "../../../common/lisp/grid.lisp" *load-truename*))
 
-(defvar *cycles* 1000000000)
 
 (defmacro tilt (grid direction)
   (let* ((vertical-p (ecase direction (:north t) (:south t) (:west nil) (:east nil)))
@@ -15,9 +14,9 @@
                     for ,y from bottom ,@(if to-0-p `(below ,dimension-y) `(downto 0))
                     for c = (aref grid row col)
                     if (char= c #\#) do (setf bottom (,(if to-0-p '1+ '1-) ,y))
-                    else if (char= c #\O) do (setf (aref grid row col) #\.)
-                    and do (setf (aref grid ,@(if vertical-p `(bottom col) `(row bottom)))
-                                 #\O)
+                    else if (char= c #\O)
+                    do (setf (aref grid row col) #\.
+                             (aref grid ,@(if vertical-p `(bottom col) `(row bottom))) #\O)
                     and do (,(if to-0-p 'incf 'decf) bottom)))))
 
 (defun cycle (grid)
@@ -38,15 +37,16 @@
         for index from 0 below (array-total-size flat-grid)
         if (char= (aref flat-grid index) #\O) collect index))
 
-(let ((grid (make-grid (parse-input))))
+(let ((grid (make-grid (parse-input)))
+      (cycles 1000000000))
   (tilt grid :north)
   (format t "~D~&" (total-load grid))
   (multiple-value-bind (offset period)
-    (loop repeat *cycles*
+    (loop repeat cycles
           for nil = (cycle grid)
           for id = (grid-id grid)
           for loop = (position id history :test #'equal)
           if loop return (values (1+ loop) (nthcdr loop load-history))
           collect id into history
           collect (total-load grid) into load-history)
-    (format t "~D~&" (nth (mod (- *cycles* offset) (length period)) period))))
+    (format t "~D~&" (nth (mod (- cycles offset) (length period)) period))))

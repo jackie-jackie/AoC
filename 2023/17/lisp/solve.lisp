@@ -49,10 +49,10 @@
                            (/= 1 (mod (+ dir n-dir) 4))
                            (loop for c from 0 to n-cnt
                                  always (< g (aref g-score n-dir c n-x n-y))))
-                   do (setf (aref g-score n-dir n-cnt n-x n-y) g)
-                   and do (setf (aref f-score n-dir n-cnt n-x n-y)
-                                (+ g (+ (abs (- n-x goal-x)) (abs (- n-y goal-y)))))
-                   and do (setf open-set (queue-insert neighbor open-set f-score))))))
+                   do (setf (aref g-score n-dir n-cnt n-x n-y) g
+                            (aref f-score n-dir n-cnt n-x n-y)
+                            (+ g (+ (abs (- n-x goal-x)) (abs (- n-y goal-y))))
+                            open-set (queue-insert neighbor open-set f-score))))))
 
 (let ((grid (make-grid (parse-input :pre (curry #'map 'list #'digit-char-p)))))
   (format t "~D~&" (minimum-heat-loss grid 0 3))
