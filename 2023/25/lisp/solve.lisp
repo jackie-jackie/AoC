@@ -19,7 +19,7 @@
    by counting the number of disjoint paths from start to end. Start and end are
    in different partition iff there are 3 such paths."
   (loop with neighbors-copy = (copy-seq neighbors)
-        for i from 0
+        for i from 0 to 4
         for path = (bfs neighbors-copy start end)
         while path
         do (loop for (a b) on path
