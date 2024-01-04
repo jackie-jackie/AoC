@@ -2,7 +2,7 @@
 (load (merge-pathnames "../../../common/lisp/grid.lisp" *load-truename*))
 
 (defun queue-insert (new queue priorities)
-  (if (or (null queue)
+  (if (or (endp queue)
           (< (apply #'aref priorities new) (apply #'aref priorities (first queue))))
       (cons new (delete new queue :test #'equal))
       (cons (first queue) (queue-insert new (rest queue) priorities))))
@@ -27,7 +27,7 @@
                                (abs (- (third start) goal-y))))))
 
     (loop with open-set = (list start)
-          until (null open-set)
+          while open-set
           for (dir cnt x y) = (pop open-set)
           maximize (length open-set) into l
           if (and (= x goal-x) (= y goal-y)) return (aref g-score dir cnt x y)
